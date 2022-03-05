@@ -39,6 +39,7 @@ merged salaries with batting.with.names
 
 ```{r}
 lm(formula = age ~ avg, data = batting.complete)
+#test
 ```
 
 
