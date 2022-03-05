@@ -10,7 +10,7 @@ batting2015 <- Batting%>%subset(yearID >= 2015)
 ```
 
 ```{r}
-
+test
 ```
 Selected columns with necessary info from People
 ```{r}
