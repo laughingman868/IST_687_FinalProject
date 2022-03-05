@@ -3,5 +3,26 @@
 ```
 
 
+Subset of batters past 2015
+
+```{r}
+batting2015 <- Batting%>%subset(yearID >= 2015)
+```
+
+```{r}
+
+```
+Selected columns with necessary info from People
+```{r}
+people.names <- People%>%select(playerID,nameFirst,nameLast, bats,throws)
+```
+
+Merged data frames along playerID
+```{r}
+batting.with.names <- merge(batting2015,people.names, by = "playerID")
+```
+
+
+
 
 
