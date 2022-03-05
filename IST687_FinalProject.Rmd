@@ -33,6 +33,9 @@ merged salaries with batting.with.names
 #batting.complete <- merge(batting.with.names, salaries.trimmed, by = "playerID")
 ```
 
+```{r}
+#testing
+```
 
 
 
