@@ -46,3 +46,5 @@ lm(formula = age ~ avg, data = batting.complete)
 
 #added by Kellen
 
+#added by Brenon
+
