@@ -10,7 +10,7 @@ batting2015 <- Batting%>%subset(yearID >= 2015)
 ```
 
 ```{r}
-test
+
 ```
 Selected columns with necessary info from People
 ```{r}
@@ -22,6 +22,16 @@ Merged data frames along playerID
 batting.with.names <- merge(batting2015,people.names, by = "playerID")
 ```
 
+trimmed salaries df
+```{r}
+salaries.trimmed <- Salaries%>%select(playerID,salary, yearID)
+
+```
+
+merged salaries with batting.with.names
+```{r}
+#batting.complete <- merge(batting.with.names, salaries.trimmed, by = "playerID")
+```
 
 
 
