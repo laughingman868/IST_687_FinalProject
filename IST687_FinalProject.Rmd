@@ -6,6 +6,7 @@
 Subset of batters past 2015
 
 ```{r}
+library(tidyverse)
 rm(list = ls())
 batting2015 <- Batting%>%subset(yearID >= 2015)
 ```
