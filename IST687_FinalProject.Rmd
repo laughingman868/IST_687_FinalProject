@@ -1,13 +1,12 @@
 ```{r}
-#this line was added as a test
+library(tidyverse)
+rm(list = ls())
 ```
 
 
 Subset of batters past 2015
 
 ```{r}
-library(tidyverse)
-rm(list = ls())
 batting2015 <- Batting%>%subset(yearID >= 2015)
 ```
 
