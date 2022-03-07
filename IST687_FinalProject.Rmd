@@ -1,13 +1,12 @@
 ```{r}
 library(tidyverse)
-rm(list = ls())
+rm(list = ls())#Clears environment variables
 ```
 
 
-Subset of batters past 2015
-
+Reads in the .csv file which has already been added to the project folder
 ```{r}
-batting2015 <- Batting%>%subset(yearID >= 2015)
+ONP_Original <- read.csv(file = 'OnlineNewsPopularity.csv')
 ```
 
 ```{r}
@@ -43,9 +42,8 @@ lm(formula = age ~ avg, data = batting.complete)
 #test
 ```
 
-#added by brenon
+```{r}
 
-#added by Kellen
+```
 
-#added by Brenon
 
