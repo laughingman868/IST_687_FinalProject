@@ -9,38 +9,6 @@ Reads in the .csv file which has already been added to the project folder
 ONP_Original <- read.csv(file = 'OnlineNewsPopularity.csv')
 ```
 
-```{r}
-
-```
-Selected columns with necessary info from People
-```{r}
-people.names <- People%>%select(playerID,nameFirst,nameLast, bats,throws)
-```
-
-Merged data frames along playerID
-```{r}
-batting.with.names <- merge(batting2015,people.names, by = "playerID")
-```
-
-trimmed salaries df
-```{r}
-salaries.trimmed <- Salaries%>%select(playerID,salary, yearID)
-
-```
-
-merged salaries with batting.with.names
-```{r}
-#batting.complete <- merge(batting.with.names, salaries.trimmed, by = "playerID")
-```
-
-```{r}
-#testing
-```
-
-```{r}
-lm(formula = age ~ avg, data = batting.complete)
-#test
-```
 
 ```{r}
 
