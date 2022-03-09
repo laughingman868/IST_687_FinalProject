@@ -9,9 +9,23 @@ Reads in the .csv file which has already been added to the project folder
 ONP_Original <- read.csv(file = 'OnlineNewsPopularity.csv')
 ```
 
-
+Removed Unnecessary Columns
 ```{r}
-
+ONP_Trimmed <- ONP_Original%>%select(-2:-3,-5:-7,-12:-13,-20:-28,-40:-44)
 ```
 
+
+```{r}
+ONP_Business <- ONP_Trimmed%>%subset(data_channel_is_bus == 1)
+```
+
+created histogram to show avg number of shares
+```{r}
+hist(ONP_Trimmed$self_reference_avg_sharess)
+```
+
+histogram to visualize number of words in the articles 
+```{r}
+hist(ONP_Trimmed$n_tokens_content)
+```
 
