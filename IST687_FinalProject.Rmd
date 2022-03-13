@@ -28,4 +28,22 @@ histogram to visualize number of words in the articles
 ```{r}
 hist(ONP_Trimmed$n_tokens_content)
 ```
+```{r}
+sapply(ONP_Trimmed, function(x) sum(is.na(x)))
+```
+
+```{r}
+ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words, data = ONP_Trimmed)
+summary(ONP.lm)
+```
+```{r}
+# ONP.glm = glm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words, data = ONP_Trimmed)
+# summary(ONP.glm)
+# pred_ONP <- predict(ONP.lm, type="response")
+# pred_ONP
+```
+```{r}
+
+```
+
 
