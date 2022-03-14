@@ -43,7 +43,14 @@ summary(ONP.lm)
 # pred_ONP
 ```
 ```{r}
+#both solutions I have found do the same thing which is treat the variable as a factor. Either by changing it to a factor before runing the model or buy specifying that you want that variable treated as a factor in the model. 
 
+#ONP_Trimmed$is_weekend = as.factor(ONP_Trimmed$is_weekend)#I am not sure if this is working correctly but I read that as long as the variable is a factor, R will know it is being looked at categorically 
+
+
+ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+is_weekend+factor(data_channel_is_socmed), data = ONP_Trimmed)
+summary(ONP.lm)
+str(ONP_Trimmed)
 ```
 
 
