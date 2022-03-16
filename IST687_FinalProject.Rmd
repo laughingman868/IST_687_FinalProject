@@ -50,7 +50,26 @@ summary(ONP.lm)
 
 ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+is_weekend+factor(data_channel_is_socmed), data = ONP_Trimmed)
 summary(ONP.lm)
-str(ONP_Trimmed)
 ```
 
+
+```{r}
+ggplot(ONP_Trimmed,aes(num_videos,shares) ) + geom_col(size = 5, alpha = 0.5, color="red")
+
+
+```
+```{r}
+ggplot(ONP_Trimmed, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue",  )
+```
+
+lm model with all the variables to see effect on shares
+```{r}
+set.seed(111)
+trainList <- createDataPartition(y=ONP_Trimmed$shares, p=.80,list=F)
+trainSet <- ONP_Trimmed[trainList,]
+testSet <- ONP_Trimmed[-trainList,]
+fit1 <- lm(shares ~., trainSet)
+
+#don't run, still need to tweak. 
+```
 
