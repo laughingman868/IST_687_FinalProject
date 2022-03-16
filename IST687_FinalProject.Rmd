@@ -73,3 +73,30 @@ fit1 <- lm(shares ~., trainSet)
 #don't run, still need to tweak. 
 ```
 
+
+```{r}
+onptest <- ONP_Trimmed
+
+pubday <- onptest%>%select(weekday_is_monday:weekday_is_sunday)
+
+
+pubday$weekday_is_monday <- pubday$weekday_is_monday%>%replace(pubday$weekday_is_monday==1, "Monday")
+
+pubday$weekday_is_tuesday <- pubday$weekday_is_tuesday%>%replace(pubday$weekday_is_tuesday==1, "Tuesday")
+
+pubday$weekday_is_wednesday <- pubday$weekday_is_wednesday%>%replace(pubday$weekday_is_wednesday==1, "Wednesday")
+
+pubday$weekday_is_thursday <- pubday$weekday_is_thursday%>%replace(pubday$weekday_is_thursday==1, "Thursday")
+
+pubday$weekday_is_friday <- pubday$weekday_is_friday%>%replace(pubday$weekday_is_friday==1, "Friday")
+
+pubday$weekday_is_saturday <- pubday$weekday_is_saturday%>%replace(pubday$weekday_is_saturday==1, "Saturday")
+
+pubday$weekday_is_sunday <- pubday$weekday_is_sunday%>%replace(pubday$weekday_is_sunday==1, "Sunday")
+
+
+pubday2 <- pubday%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
+
+#have issue with _0_ being included in the main merged column.. 
+```
+
