@@ -89,7 +89,6 @@ onptest <- ONP_Trimmed
 
 pubday <- onptest%>%select(weekday_is_monday:weekday_is_sunday)
 
-
 pubday$weekday_is_monday <- pubday$weekday_is_monday%>%replace(pubday$weekday_is_monday==1, "Monday")
 
 pubday$weekday_is_tuesday <- pubday$weekday_is_tuesday%>%replace(pubday$weekday_is_tuesday==1, "Tuesday")
@@ -107,6 +106,21 @@ pubday$weekday_is_sunday <- pubday$weekday_is_sunday%>%replace(pubday$weekday_is
 
 pubday2 <- pubday%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
 
+pubday2$`day of week` <- gsub("_", "", pubday2$`day of week`)
+pubday2$`day of week` <- gsub("0", "", pubday2$`day of week`)
 #have issue with _0_ being included in the main merged column.. 
+
+
+
 ```
+
+```{r}
+
+```
+
+
+
+
+
+
 
