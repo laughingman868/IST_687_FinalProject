@@ -48,9 +48,20 @@ summary(ONP.lm)
 
 #ONP_Trimmed$is_weekend = as.factor(ONP_Trimmed$is_weekend)#I am not sure if this is working correctly but I read that as long as the variable is a factor, R will know it is being looked at categorically 
 
-
+#code tested as factor
 ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+factor(weekday_is_saturday), data = ONP_Trimmed)
 summary(ONP.lm)
+
+#code tested as binary(original)
+ONP.lm2 = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+weekday_is_saturday, data = ONP_Trimmed)
+summary(ONP.lm2)
+
+#code tested using Kellen's method with saturday replacing the 1's
+ONP_Trimmed$weekday_is_saturday <- ONP_Trimmed$weekday_is_saturday%>%replace(ONP_Trimmed$weekday_is_saturday==1, "Saturday")
+
+ONP.lm3 = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+weekday_is_saturday, data = ONP_Trimmed)
+summary(ONP.lm3)
+#all three models produced he same result for saturday column
 ```
 
 
