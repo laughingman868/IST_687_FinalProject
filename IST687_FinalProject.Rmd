@@ -112,10 +112,34 @@ pubday2$`day of week` <- gsub("0", "", pubday2$`day of week`)
 
 
 
+
 ```
 
 ```{r}
+ONP_Test <- ONP_Trimmed
 
+ONP_Test$weekday_is_monday <- ONP_Test$weekday_is_monday%>%replace(ONP_Test$weekday_is_monday==1, "Monday")
+
+ONP_Test$weekday_is_tuesday <- ONP_Test$weekday_is_tuesday%>%replace(ONP_Test$weekday_is_tuesday==1, "Tuesday")
+
+ONP_Test$weekday_is_wednesday <- ONP_Test$weekday_is_wednesday%>%replace(ONP_Test$weekday_is_wednesday==1, "Wednesday")
+
+ONP_Test$weekday_is_thursday <- ONP_Test$weekday_is_thursday%>%replace(ONP_Test$weekday_is_thursday==1, "Thursday")
+
+ONP_Test$weekday_is_friday <- ONP_Test$weekday_is_friday%>%replace(ONP_Test$weekday_is_friday==1, "Friday")
+
+ONP_Test$weekday_is_saturday <- ONP_Test$weekday_is_saturday%>%replace(ONP_Test$weekday_is_saturday==1, "Saturday")
+
+ONP_Test$weekday_is_sunday <- ONP_Test$weekday_is_sunday%>%replace(ONP_Test$weekday_is_sunday==1, "Sunday")
+
+
+ONP_Test <- ONP_Test%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
+
+ONP_Test$`day of week` <- gsub("_", "",ONP_Test$`day of week`)
+ONP_Test$`day of week` <- gsub("0", "", ONP_Test$`day of week`)
+
+ONP.lm4 = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+`day of week`, data = ONP_Test)
+summary(ONP.lm4)
 ```
 
 
