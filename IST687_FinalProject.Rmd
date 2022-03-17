@@ -49,15 +49,13 @@ summary(ONP.lm)
 #ONP_Trimmed$is_weekend = as.factor(ONP_Trimmed$is_weekend)#I am not sure if this is working correctly but I read that as long as the variable is a factor, R will know it is being looked at categorically 
 
 
-ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+is_weekend+factor(weekday_is_saturday), data = ONP_Trimmed)
+ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+factor(weekday_is_saturday), data = ONP_Trimmed)
 summary(ONP.lm)
 ```
 
 
 ```{r}
 ggplot(ONP_Trimmed,aes(num_videos,shares) ) + geom_col(size = 5, alpha = 0.5, color="red")
-
-
 ```
 ```{r}
 ggplot(ONP_Trimmed, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue",  )
