@@ -3,7 +3,6 @@ library(tidyverse)
 rm(list = ls())#Clears environment variables
 ```
 
-
 Reads in the .csv file which has already been added to the project folder
 ```{r}
 ONP_Original <- read.csv(file = 'OnlineNewsPopularity.csv')
@@ -11,7 +10,6 @@ ONP_Original <- read.csv(file = 'OnlineNewsPopularity.csv')
 
 Removed Unnecessary Columns
 ```{r}
-#ONP_Trimmed <- ONP_Original%>%select(-2:-3,-5:-7,-12:-13,-20:-28,-40:-44)
 ONP_Trimmed <- ONP_Original%>%select(-2:-3,-5:-9,-12:-13,-20:-28,-40:-44)
 ```
 
@@ -43,26 +41,6 @@ summary(ONP.lm)
 # pred_ONP <- predict(ONP.lm, type="response")
 # pred_ONP
 ```
-```{r}
-#both solutions I have found do the same thing which is treat the variable as a factor. Either by changing it to a factor before running the model or buy specifying that you want that variable treated as a factor in the model. 
-
-#ONP_Trimmed$is_weekend = as.factor(ONP_Trimmed$is_weekend)#I am not sure if this is working correctly but I read that as long as the variable is a factor, R will know it is being looked at categorically 
-
-#code tested as factor
-ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+factor(weekday_is_saturday), data = ONP_Trimmed)
-summary(ONP.lm)
-
-#code tested as binary(original)
-ONP.lm2 = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+weekday_is_saturday, data = ONP_Trimmed)
-summary(ONP.lm2)
-
-#code tested using Kellen's method with saturday replacing the 1's
-ONP_Trimmed$weekday_is_saturday <- ONP_Trimmed$weekday_is_saturday%>%replace(ONP_Trimmed$weekday_is_saturday==1, "Saturday")
-
-ONP.lm3 = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+weekday_is_saturday, data = ONP_Trimmed)
-summary(ONP.lm3)
-#all three models produced he same result for saturday column
-```
 
 
 ```{r}
@@ -83,38 +61,7 @@ fit1 <- lm(shares ~., trainSet)
 #don't run, still need to tweak. 
 ```
 
-
-```{r}
-onptest <- ONP_Trimmed
-
-pubday <- onptest%>%select(weekday_is_monday:weekday_is_sunday)
-
-pubday$weekday_is_monday <- pubday$weekday_is_monday%>%replace(pubday$weekday_is_monday==1, "Monday")
-
-pubday$weekday_is_tuesday <- pubday$weekday_is_tuesday%>%replace(pubday$weekday_is_tuesday==1, "Tuesday")
-
-pubday$weekday_is_wednesday <- pubday$weekday_is_wednesday%>%replace(pubday$weekday_is_wednesday==1, "Wednesday")
-
-pubday$weekday_is_thursday <- pubday$weekday_is_thursday%>%replace(pubday$weekday_is_thursday==1, "Thursday")
-
-pubday$weekday_is_friday <- pubday$weekday_is_friday%>%replace(pubday$weekday_is_friday==1, "Friday")
-
-pubday$weekday_is_saturday <- pubday$weekday_is_saturday%>%replace(pubday$weekday_is_saturday==1, "Saturday")
-
-pubday$weekday_is_sunday <- pubday$weekday_is_sunday%>%replace(pubday$weekday_is_sunday==1, "Sunday")
-
-
-pubday2 <- pubday%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
-
-pubday2$`day of week` <- gsub("_", "", pubday2$`day of week`)
-pubday2$`day of week` <- gsub("0", "", pubday2$`day of week`)
-#have issue with _0_ being included in the main merged column.. 
-
-
-
-
-```
-
+Grouping days of the week into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub. 
 ```{r}
 ONP_Test <- ONP_Trimmed
 
@@ -132,17 +79,12 @@ ONP_Test$weekday_is_saturday <- ONP_Test$weekday_is_saturday%>%replace(ONP_Test$
 
 ONP_Test$weekday_is_sunday <- ONP_Test$weekday_is_sunday%>%replace(ONP_Test$weekday_is_sunday==1, "Sunday")
 
-
 ONP_Test <- ONP_Test%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
 
 ONP_Test$`day of week` <- gsub("_", "",ONP_Test$`day of week`)
 ONP_Test$`day of week` <- gsub("0", "", ONP_Test$`day of week`)
-
-ONP.lm4 = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+`day of week`, data = ONP_Test)
-summary(ONP.lm4)
 ```
-
-
+Grouping data channels into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub.
 ```{r}
 ONP_Test$data_channel_is_lifestyle <- ONP_Test$data_channel_is_lifestyle%>%replace(ONP_Test$data_channel_is_lifestyle==1, "Lifestyle")
 
@@ -163,7 +105,6 @@ ONP_Test$Article_Channel <- gsub("0", "", ONP_Test$Article_Channel)
 ```
 
 
-
 ```{r}
 ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
 ```
@@ -176,4 +117,11 @@ ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
 ONP_Test <- rename(ONP_Test, 'Day_of_Week' ='day of week')
 ```
 
+There seem to be rows in the Article Channel with black cells, speak with Kellen about possibly removing those rows.
+```{r}
+sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
+df <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
+sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
+
+```
 
