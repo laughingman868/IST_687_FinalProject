@@ -13,6 +13,49 @@ Removed Unnecessary Columns
 ONP_Trimmed <- ONP_Original%>%select(-2:-3,-5:-9,-12:-13,-20:-28,-40:-44)
 ```
 
+Grouping days of the week into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub. 
+```{r}
+ONP_Test <- ONP_Trimmed
+
+ONP_Test$weekday_is_monday <- ONP_Test$weekday_is_monday%>%replace(ONP_Test$weekday_is_monday==1, "Monday")
+
+ONP_Test$weekday_is_tuesday <- ONP_Test$weekday_is_tuesday%>%replace(ONP_Test$weekday_is_tuesday==1, "Tuesday")
+
+ONP_Test$weekday_is_wednesday <- ONP_Test$weekday_is_wednesday%>%replace(ONP_Test$weekday_is_wednesday==1, "Wednesday")
+
+ONP_Test$weekday_is_thursday <- ONP_Test$weekday_is_thursday%>%replace(ONP_Test$weekday_is_thursday==1, "Thursday")
+
+ONP_Test$weekday_is_friday <- ONP_Test$weekday_is_friday%>%replace(ONP_Test$weekday_is_friday==1, "Friday")
+
+ONP_Test$weekday_is_saturday <- ONP_Test$weekday_is_saturday%>%replace(ONP_Test$weekday_is_saturday==1, "Saturday")
+
+ONP_Test$weekday_is_sunday <- ONP_Test$weekday_is_sunday%>%replace(ONP_Test$weekday_is_sunday==1, "Sunday")
+
+ONP_Test <- ONP_Test%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
+
+ONP_Test$`day of week` <- gsub("_", "",ONP_Test$`day of week`)
+ONP_Test$`day of week` <- gsub("0", "", ONP_Test$`day of week`)
+```
+
+Grouping data channels into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub.
+```{r}
+ONP_Test$data_channel_is_lifestyle <- ONP_Test$data_channel_is_lifestyle%>%replace(ONP_Test$data_channel_is_lifestyle==1, "Lifestyle")
+
+ONP_Test$data_channel_is_entertainment <- ONP_Test$data_channel_is_entertainment%>%replace(ONP_Test$data_channel_is_entertainment==1, "Entertainment")
+
+ONP_Test$data_channel_is_bus <- ONP_Test$data_channel_is_bus%>%replace(ONP_Test$data_channel_is_bus==1, "Business")
+
+ONP_Test$data_channel_is_socmed <- ONP_Test$data_channel_is_socmed%>%replace(ONP_Test$data_channel_is_socmed==1, "Social Media")
+
+ONP_Test$data_channel_is_tech <- ONP_Test$data_channel_is_tech%>%replace(ONP_Test$data_channel_is_tech==1, "Technology")
+
+ONP_Test$data_channel_is_world <- ONP_Test$data_channel_is_world%>%replace(ONP_Test$data_channel_is_world==1, "World")
+
+ONP_Test <- ONP_Test%>%unite(data_channel_is_lifestyle:data_channel_is_world, col = "Article_Channel", remove = T, sep ="_" )
+
+ONP_Test$Article_Channel <- gsub("_", "",ONP_Test$Article_Channel)
+ONP_Test$Article_Channel <- gsub("0", "", ONP_Test$Article_Channel)
+```
 
 ```{r}
 ONP_Business <- ONP_Trimmed%>%subset(data_channel_is_bus == 1)
@@ -61,49 +104,6 @@ fit1 <- lm(shares ~., trainSet)
 #don't run, still need to tweak. 
 ```
 
-Grouping days of the week into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub. 
-```{r}
-ONP_Test <- ONP_Trimmed
-
-ONP_Test$weekday_is_monday <- ONP_Test$weekday_is_monday%>%replace(ONP_Test$weekday_is_monday==1, "Monday")
-
-ONP_Test$weekday_is_tuesday <- ONP_Test$weekday_is_tuesday%>%replace(ONP_Test$weekday_is_tuesday==1, "Tuesday")
-
-ONP_Test$weekday_is_wednesday <- ONP_Test$weekday_is_wednesday%>%replace(ONP_Test$weekday_is_wednesday==1, "Wednesday")
-
-ONP_Test$weekday_is_thursday <- ONP_Test$weekday_is_thursday%>%replace(ONP_Test$weekday_is_thursday==1, "Thursday")
-
-ONP_Test$weekday_is_friday <- ONP_Test$weekday_is_friday%>%replace(ONP_Test$weekday_is_friday==1, "Friday")
-
-ONP_Test$weekday_is_saturday <- ONP_Test$weekday_is_saturday%>%replace(ONP_Test$weekday_is_saturday==1, "Saturday")
-
-ONP_Test$weekday_is_sunday <- ONP_Test$weekday_is_sunday%>%replace(ONP_Test$weekday_is_sunday==1, "Sunday")
-
-ONP_Test <- ONP_Test%>%unite(weekday_is_monday:weekday_is_sunday, col = "day of week", remove = T, sep ="_" )
-
-ONP_Test$`day of week` <- gsub("_", "",ONP_Test$`day of week`)
-ONP_Test$`day of week` <- gsub("0", "", ONP_Test$`day of week`)
-```
-Grouping data channels into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub.
-```{r}
-ONP_Test$data_channel_is_lifestyle <- ONP_Test$data_channel_is_lifestyle%>%replace(ONP_Test$data_channel_is_lifestyle==1, "Lifestyle")
-
-ONP_Test$data_channel_is_entertainment <- ONP_Test$data_channel_is_entertainment%>%replace(ONP_Test$data_channel_is_entertainment==1, "Entertainment")
-
-ONP_Test$data_channel_is_bus <- ONP_Test$data_channel_is_bus%>%replace(ONP_Test$data_channel_is_bus==1, "Business")
-
-ONP_Test$data_channel_is_socmed <- ONP_Test$data_channel_is_socmed%>%replace(ONP_Test$data_channel_is_socmed==1, "Social Media")
-
-ONP_Test$data_channel_is_tech <- ONP_Test$data_channel_is_tech%>%replace(ONP_Test$data_channel_is_tech==1, "Technology")
-
-ONP_Test$data_channel_is_world <- ONP_Test$data_channel_is_world%>%replace(ONP_Test$data_channel_is_world==1, "World")
-
-ONP_Test <- ONP_Test%>%unite(data_channel_is_lifestyle:data_channel_is_world, col = "Article_Channel", remove = T, sep ="_" )
-
-ONP_Test$Article_Channel <- gsub("_", "",ONP_Test$Article_Channel)
-ONP_Test$Article_Channel <- gsub("0", "", ONP_Test$Article_Channel)
-```
-
 
 ```{r}
 ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
@@ -117,7 +117,7 @@ ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
 ONP_Test <- rename(ONP_Test, 'Day_of_Week' ='day of week')
 ```
 
-There seem to be rows in the Article Channel with black cells, speak with Kellen about possibly removing those rows.
+There seem to be rows in the Article Channel with black cells, speak with Kellen about possibly removing those rows.  
 ```{r}
 sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
 df <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
