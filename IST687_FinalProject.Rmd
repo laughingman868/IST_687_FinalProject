@@ -143,8 +143,37 @@ summary(ONP.lm4)
 ```
 
 
+```{r}
+ONP_Test$data_channel_is_lifestyle <- ONP_Test$data_channel_is_lifestyle%>%replace(ONP_Test$data_channel_is_lifestyle==1, "Lifestyle")
+
+ONP_Test$data_channel_is_entertainment <- ONP_Test$data_channel_is_entertainment%>%replace(ONP_Test$data_channel_is_entertainment==1, "Entertainment")
+
+ONP_Test$data_channel_is_bus <- ONP_Test$data_channel_is_bus%>%replace(ONP_Test$data_channel_is_bus==1, "Business")
+
+ONP_Test$data_channel_is_socmed <- ONP_Test$data_channel_is_socmed%>%replace(ONP_Test$data_channel_is_socmed==1, "Social Media")
+
+ONP_Test$data_channel_is_tech <- ONP_Test$data_channel_is_tech%>%replace(ONP_Test$data_channel_is_tech==1, "Technology")
+
+ONP_Test$data_channel_is_world <- ONP_Test$data_channel_is_world%>%replace(ONP_Test$data_channel_is_world==1, "World")
+
+ONP_Test <- ONP_Test%>%unite(data_channel_is_lifestyle:data_channel_is_world, col = "Article_Channel", remove = T, sep ="_" )
+
+ONP_Test$Article_Channel <- gsub("_", "",ONP_Test$Article_Channel)
+ONP_Test$Article_Channel <- gsub("0", "", ONP_Test$Article_Channel)
+```
 
 
 
+```{r}
+ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
+```
+
+
+```{r}
+ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
+```
+```{r}
+ONP_Test <- rename(ONP_Test, 'Day_of_Week' ='day of week')
+```
 
 
