@@ -144,10 +144,6 @@ svmPred <- predict(svm.model, newdata=testSet)
 confusion1 <- confusionMatrix(svmPred, testSet$popularity)
 confusion1
 #svmPred <- predict(svm.model, newdata=validation_set)
-svmPred
-#svmPred <- predict(svm.model, newdata=testSet)
-# confusion <- table(svmPred, validation_set)
-# confusion
 ```
 
 ```{r}
