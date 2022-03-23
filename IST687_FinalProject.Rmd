@@ -113,6 +113,7 @@ set.seed(111)
 trainList <- createDataPartition(y=df_testing$shares, p=.80,list=F)
 trainSet <- df_testing[trainList,]
 testSet <- df_testing[-trainList,]
+
 #fit1 <- lm(shares ~., trainSet)
 svm.model <- train(shares~Article_Channel+Day_of_Week+n_tokens_content+num_imgs+num_videos, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
 
