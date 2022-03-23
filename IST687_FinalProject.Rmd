@@ -57,6 +57,19 @@ ONP_Test$Article_Channel <- gsub("_", "",ONP_Test$Article_Channel)
 ONP_Test$Article_Channel <- gsub("0", "", ONP_Test$Article_Channel)
 ```
 
+Remove rows with blanks in the Article Channel column,Check day of week column for blank rows then rename day of week to "Day_of_Week" 
+```{r}
+sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
+ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
+sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
+ONP_Final <- rename(ONP_Final, 'Day_of_Week' ='day of week')
+```
+Sample of df specifically for testing the model to save time
+```{r}
+df_testing <- ONP_Final[sample(nrow(ONP_Final), 2000), ]
+```
+
+
 ```{r}
 ONP_Business <- ONP_Trimmed%>%subset(data_channel_is_bus == 1)
 ```
@@ -95,54 +108,44 @@ ggplot(ONP_Trimmed, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue", 
 
 lm model with all the variables to see effect on shares
 ```{r}
-df_Final_1 <- ONP_Final%>%slice(1:10000)
+#df_Final_1 <- ONP_Final%>%slice(1:10000)
 set.seed(111)
-trainList <- createDataPartition(y=df_Final_1$shares, p=.80,list=F)
-trainSet <- df_Final_1[trainList,]
-testSet <- df_Final_1[-trainList,]
+trainList <- createDataPartition(y=df_testing$shares, p=.80,list=F)
+trainSet <- df_testing[trainList,]
+testSet <- df_testing[-trainList,]
 #fit1 <- lm(shares ~., trainSet)
-svm.model <- train(shares~Article_Channel+Day_of_Week, data=trainSet, method="svmRadial", 
-                      preProc=c("center", "scale"))
+svm.model <- train(shares~Article_Channel+Day_of_Week, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
 
 #don't run, still need to tweak. 
 ```
 
+
 ```{r}
-as.factor(svmPred)
-as.factor(testSet)
-svmPred <- predict(svm.model, newdata=testSet)
-confusion1 <- confusionMatrix(svmPred, testSet$shares)
-confusion1
+validation_set <- df_testing%>%slice(1:10)
+validation_set <- validation_set[,-27]
 ```
 
+
+```{r}
+svmPred <- predict(svm.model, newdata=validation_set)
+svmPred
+#svmPred <- predict(svm.model, newdata=testSet)
+confusion <- table(svmPred, validation_set)
+confusion
+```
 
 ```{r}
 ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
 ```
 
-
 ```{r}
 ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
 ```
-```{r}
-ONP_Final <- rename(ONP_Final, 'Day_of_Week' ='day of week')
-```
 
-There seem to be rows in the Article Channel with black cells, speak with Kellen about possibly removing those rows.  
-```{r}
-sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
-ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
-sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
-
-
-```
 ```{r}
 set.seed(111)
 trainList <- createDataPartition(y=cred$credit_risk, p=.80, list = FALSE)
 trainSet <- cred[trainList,]
 testSet <- cred[-trainList,]
-
-
-
 ```
 
