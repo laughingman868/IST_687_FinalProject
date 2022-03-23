@@ -120,8 +120,9 @@ ONP_Test <- rename(ONP_Test, 'Day_of_Week' ='day of week')
 There seem to be rows in the Article Channel with black cells, speak with Kellen about possibly removing those rows.  
 ```{r}
 sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
-df <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
+ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
 sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
+
 
 ```
 
