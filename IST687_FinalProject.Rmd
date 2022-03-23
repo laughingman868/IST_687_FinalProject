@@ -75,7 +75,7 @@ sapply(ONP_Trimmed, function(x) sum(is.na(x)))
 ```
 
 ```{r}
-ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words, data = ONP_Trimmed)
+ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
 summary(ONP.lm)
 ```
 ```{r}
@@ -95,13 +95,24 @@ ggplot(ONP_Trimmed, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue", 
 
 lm model with all the variables to see effect on shares
 ```{r}
+df_Final_1 <- ONP_Final%>%slice(1:10000)
 set.seed(111)
-trainList <- createDataPartition(y=ONP_Trimmed$shares, p=.80,list=F)
-trainSet <- ONP_Trimmed[trainList,]
-testSet <- ONP_Trimmed[-trainList,]
-fit1 <- lm(shares ~., trainSet)
+trainList <- createDataPartition(y=df_Final_1$shares, p=.80,list=F)
+trainSet <- df_Final_1[trainList,]
+testSet <- df_Final_1[-trainList,]
+#fit1 <- lm(shares ~., trainSet)
+svm.model <- train(shares~Article_Channel+Day_of_Week, data=trainSet, method="svmRadial", 
+                      preProc=c("center", "scale"))
 
 #don't run, still need to tweak. 
+```
+
+```{r}
+as.factor(svmPred)
+as.factor(testSet)
+svmPred <- predict(svm.model, newdata=testSet)
+confusion1 <- confusionMatrix(svmPred, testSet$shares)
+confusion1
 ```
 
 
@@ -114,7 +125,7 @@ ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
 ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
 ```
 ```{r}
-ONP_Test <- rename(ONP_Test, 'Day_of_Week' ='day of week')
+ONP_Final <- rename(ONP_Final, 'Day_of_Week' ='day of week')
 ```
 
 There seem to be rows in the Article Channel with black cells, speak with Kellen about possibly removing those rows.  
@@ -122,6 +133,15 @@ There seem to be rows in the Article Channel with black cells, speak with Kellen
 sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
 ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
 sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
+
+
+```
+```{r}
+set.seed(111)
+trainList <- createDataPartition(y=cred$credit_risk, p=.80, list = FALSE)
+trainSet <- cred[trainList,]
+testSet <- cred[-trainList,]
+
 
 
 ```
