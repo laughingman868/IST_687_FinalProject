@@ -1,5 +1,6 @@
 ```{r}
 library(tidyverse)
+library(caret)
 rm(list = ls())#Clears environment variables
 ```
 
@@ -64,10 +65,48 @@ ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows wit
 sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
 ONP_Final <- rename(ONP_Final, 'Day_of_Week' ='day of week')
 ```
+
+Creates a new column based on shares, called popularity. If the shares are above 2520.443 the article is considered popular.
+```{r}
+ONP_Final$popularity = ifelse(ONP_Final$shares>2520.443,1,0)
+ONP_Final$popularity <- as.factor(ONP_Final$popularity)
+```
+
 Sample of df specifically for testing the model to save time
 ```{r}
-df_testing <- ONP_Final[sample(nrow(ONP_Final), 2000), ]
+ONP_Final <- ONP_Final[sample(nrow(ONP_Final), 10000), ]
 ```
+
+SVM Model
+```{r}
+set.seed(111)
+trainList <- createDataPartition(y=ONP_Final$popularity, p=.80,list=F)
+trainSet <- ONP_Final[trainList,]
+testSet <- ONP_Final[-trainList,]
+
+svm.model <- train(popularity~Article_Channel+Day_of_Week+n_tokens_content+num_imgs+num_videos, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
+
+#don't run, still need to tweak. 
+```
+
+Prediction and confusion matrix for SVM model
+```{r}
+svmPred <- predict(svm.model, newdata=testSet)
+confusion1 <- confusionMatrix(svmPred, testSet$popularity)
+confusion1
+```
+Linear Regression Model
+```{r}
+ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
+summary(ONP.lm)
+```
+
+
+
+
+
+
+
 
 
 ```{r}
@@ -87,11 +126,6 @@ hist(ONP_Trimmed$n_tokens_content)
 sapply(ONP_Trimmed, function(x) sum(is.na(x)))
 ```
 
-```{r}
-ONP.lm = glm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
-summary(ONP.lm)
-```
-
 
 ```{r}
 predDF <- data.frame(num_videos=4, num_imgs=5, n_tokens_content=500, rate_positive_words=.8,rate_negative_words=.3,Day_of_Week='Monday',Article_Channel="Business")
@@ -108,44 +142,6 @@ ggplot(ONP_Trimmed, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue", 
 ```
 
 
-lm model with all the variables to see effect on shares
-```{r}
-#df_Final_1 <- ONP_Final%>%slice(1:10000)
-d
-```
-
-Creates a new column based on shares, called popularity. If the shares are above 2520.443 the article is considered popular.
-```{r}
-df_testing$popularity = ifelse(df_testing$shares>2520.443,1,0)
-df_testing$popularity <- as.factor(df_testing$popularity)
-```
-
-
-```{r}
-set.seed(111)
-trainList <- createDataPartition(y=df_testing$popularity, p=.80,list=F)
-trainSet <- df_testing[trainList,]
-testSet <- df_testing[-trainList,]
-
-#fit1 <- lm(shares ~., trainSet)
-svm.model <- train(popularity~Article_Channel+Day_of_Week+n_tokens_content+num_imgs+num_videos, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
-
-#don't run, still need to tweak. 
-```
-
-
-```{r}
-validation_set <- df_testing%>%slice(1:10)
-validation_set <- validation_set[,-27]
-```
-
-
-```{r}
-svmPred <- predict(svm.model, newdata=testSet)
-confusion1 <- confusionMatrix(svmPred, testSet$popularity)
-confusion1
-#svmPred <- predict(svm.model, newdata=validation_set)
-```
 
 ```{r}
 ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
@@ -162,9 +158,13 @@ trainSet <- cred[trainList,]
 testSet <- cred[-trainList,]
 ```
 
+
+
+
+
 neural net for funsies 
 ```{r}
-ONP.net <- neuralnet(popularity ~ n_tokens_content+num_imgs+num_videos, df_testing, hidden = 4, linear.output = F, threshold = .2)
+ONP.net <- neuralnet(popularity ~ n_tokens_content+num_imgs+num_videos, ONP_Final, hidden = 4, linear.output = F, threshold = .2)
 ```
 
 ```{r}
