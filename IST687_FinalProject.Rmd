@@ -88,14 +88,15 @@ sapply(ONP_Trimmed, function(x) sum(is.na(x)))
 ```
 
 ```{r}
-ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
+ONP.lm = glm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
 summary(ONP.lm)
 ```
+
+
 ```{r}
-# ONP.glm = glm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words, data = ONP_Trimmed)
-# summary(ONP.glm)
-# pred_ONP <- predict(ONP.lm, type="response")
-# pred_ONP
+predDF <- data.frame(num_videos=4, num_imgs=5, n_tokens_content=500, rate_positive_words=.8,rate_negative_words=.3,Day_of_Week='Monday',Article_Channel="Business")
+
+predict(ONP.lm, predDF)
 ```
 
 
@@ -159,5 +160,18 @@ set.seed(111)
 trainList <- createDataPartition(y=cred$credit_risk, p=.80, list = FALSE)
 trainSet <- cred[trainList,]
 testSet <- cred[-trainList,]
+```
+
+neural net for funsies 
+```{r}
+ONP.net <- neuralnet(popularity ~ n_tokens_content+num_imgs+num_videos, df_testing, hidden = 4, linear.output = F, threshold = .2)
+```
+
+```{r}
+plot(ONP.net,rep="best")
+```
+
+```{r}
+ONP.net$result.matrix
 ```
 
