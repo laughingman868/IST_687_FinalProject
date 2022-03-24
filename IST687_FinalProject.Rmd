@@ -3,18 +3,17 @@ library(tidyverse)
 library(caret)
 rm(list = ls())#Clears environment variables
 ```
-
 Reads in the .csv file which has already been added to the project folder
 ```{r}
 ONP_Original <- read.csv(file = 'OnlineNewsPopularity.csv')
 ```
 
-Removed Unnecessary Columns
+Removes Unnecessary Columns
 ```{r}
 ONP_Trimmed <- ONP_Original%>%select(-2:-3,-5:-9,-12:-13,-20:-28,-40:-44)
 ```
 
-Grouping days of the week into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub. 
+Groups days of the week into one column for use in the models. The unite function introduced underscores and zeroes so they were removed using gsub. 
 ```{r}
 ONP_Test <- ONP_Trimmed
 
@@ -38,7 +37,7 @@ ONP_Test$`day of week` <- gsub("_", "",ONP_Test$`day of week`)
 ONP_Test$`day of week` <- gsub("0", "", ONP_Test$`day of week`)
 ```
 
-Grouping data channels into one column for use in lm model. The unite function introduced underscores and zeroes so they were removed using gsub.
+Groups data channels into one column for use with models. The unite function introduced underscores and zeroes so they were removed using gsub.
 ```{r}
 ONP_Test$data_channel_is_lifestyle <- ONP_Test$data_channel_is_lifestyle%>%replace(ONP_Test$data_channel_is_lifestyle==1, "Lifestyle")
 
@@ -58,26 +57,25 @@ ONP_Test$Article_Channel <- gsub("_", "",ONP_Test$Article_Channel)
 ONP_Test$Article_Channel <- gsub("0", "", ONP_Test$Article_Channel)
 ```
 
-Remove rows with blanks in the Article Channel column,Check day of week column for blank rows then rename day of week to "Day_of_Week" 
+Removes rows with blanks in the Article Channel column,Check day of week column for blank rows then rename day of week to "Day_of_Week" 
 ```{r}
 sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
 ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
 sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
 ONP_Final <- rename(ONP_Final, 'Day_of_Week' ='day of week')
 ```
-
-Creates a new column based on shares, called popularity. If the shares are above 2520.443 the article is considered popular.
+Creates a new column based on shares, called popularity. If the shares are above 2520.443 the article is considered popular. This column was created because the SVM model requires categorical attribute.
 ```{r}
 ONP_Final$popularity = ifelse(ONP_Final$shares>2520.443,1,0)
 ONP_Final$popularity <- as.factor(ONP_Final$popularity)
 ```
 
-Sample of df specifically for testing the model to save time
+Sample of df specifically for running the SVM model, the original ~33k rows was taking extremely long to run. 
 ```{r}
 ONP_Final <- ONP_Final[sample(nrow(ONP_Final), 10000), ]
 ```
 
-SVM Model
+Creates train and test data frames for the SVM Model.
 ```{r}
 set.seed(111)
 trainList <- createDataPartition(y=ONP_Final$popularity, p=.80,list=F)
@@ -85,23 +83,19 @@ trainSet <- ONP_Final[trainList,]
 testSet <- ONP_Final[-trainList,]
 
 svm.model <- train(popularity~Article_Channel+Day_of_Week+n_tokens_content+num_imgs+num_videos, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
-
-#don't run, still need to tweak. 
 ```
 
-Prediction and confusion matrix for SVM model
+Prediction and confusion matrix for SVM model.
 ```{r}
 svmPred <- predict(svm.model, newdata=testSet)
 confusion1 <- confusionMatrix(svmPred, testSet$popularity)
 confusion1
 ```
-Linear Regression Model
+Linear Regression Model using seven attributes as predictors. 
 ```{r}
 ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
 summary(ONP.lm)
 ```
-
-
 
 
 
@@ -150,16 +144,6 @@ ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
 ```{r}
 ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
 ```
-
-```{r}
-set.seed(111)
-trainList <- createDataPartition(y=cred$credit_risk, p=.80, list = FALSE)
-trainSet <- cred[trainList,]
-testSet <- cred[-trainList,]
-```
-
-
-
 
 
 neural net for funsies 
