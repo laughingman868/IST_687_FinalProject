@@ -62,7 +62,9 @@ Removes rows with blanks in the Article Channel column,Check day of week column 
 sum(ONP_Test$Article_Channel=="")#counts blanks in Article channel
 ONP_Final <- ONP_Test[-which(ONP_Test$Article_Channel == ""), ]#removes rows with blanks
 sum(ONP_Test$`day of week`=="")#all rows in Day of Week appear to be populated 
+sum(ONP_Test$shares=="")
 ONP_Final <- rename(ONP_Final, 'Day_of_Week' ='day of week')
+sapply(ONP_Final, function(x) sum(is.na(x)))#checks for NA's
 ```
 Creates a new column based on shares, called popularity. If the shares are above 2520.443 the article is considered popular. This column was created because the SVM model requires categorical attribute.
 ```{r}
@@ -91,34 +93,33 @@ svmPred <- predict(svm.model, newdata=testSet)
 confusion1 <- confusionMatrix(svmPred, testSet$popularity)
 confusion1
 ```
+
 Linear Regression Model using seven attributes as predictors. 
 ```{r}
 ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
 summary(ONP.lm)
 ```
 
-
-
-
-
-
-
+Graph of day of week vs shares.
 ```{r}
-ONP_Business <- ONP_Trimmed%>%subset(data_channel_is_bus == 1)
+ggplot(ONP_Final) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
 ```
 
-created histogram to show avg number of shares
+Graph videos vs shares.
 ```{r}
-hist(ONP_Trimmed$self_reference_avg_sharess)
+ggplot(ONP_Final,aes(num_videos,shares) ) + geom_col(size = 5, alpha = 0.5, color="red")
 ```
 
-histogram to visualize number of words in the articles 
+Graph of images vs shares.
 ```{r}
-hist(ONP_Trimmed$n_tokens_content)
+ggplot(ONP_Final, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue",  )
 ```
+
+Article channel vs day of week.
 ```{r}
-sapply(ONP_Trimmed, function(x) sum(is.na(x)))
+ggplot(ONP_Final,aes(Article_Channel, shares) ) + geom_col(size = 5, alpha = 0.5, color="red")
 ```
+
 
 
 ```{r}
@@ -128,22 +129,7 @@ predict(ONP.lm, predDF)
 ```
 
 
-```{r}
-ggplot(ONP_Trimmed,aes(num_videos,shares) ) + geom_col(size = 5, alpha = 0.5, color="red")
-```
-```{r}
-ggplot(ONP_Trimmed, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue",  )
-```
 
-
-
-```{r}
-ggplot(ONP_Test) + geom_col(aes(x=Article_Channel,y=self_reference_avg_sharess))
-```
-
-```{r}
-ggplot(ONP_Test) + geom_col(aes(x=(Day_of_Week),y=shares), color='blue')
-```
 
 
 neural net for funsies 
