@@ -84,7 +84,7 @@ trainList <- createDataPartition(y=ONP_Final$popularity, p=.80,list=F)
 trainSet <- ONP_Final[trainList,]
 testSet <- ONP_Final[-trainList,]
 
-svm.model <- train(popularity~Article_Channel+Day_of_Week+n_tokens_content+num_imgs+num_videos, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
+svm.model <- train(popularity~Article_Channel+Day_of_Week+n_tokens_content+num_imgs+num_videos+rate_positive_words, data=trainSet, method="svmRadial", preProc=c("center", "scale"))
 ```
 
 Prediction and confusion matrix for SVM model.
@@ -117,7 +117,7 @@ ggplot(ONP_Final, aes(num_imgs,shares)) + geom_col(size = 3, colour = "blue",  )
 
 Article channel vs day of week.
 ```{r}
-ggplot(ONP_Final,aes(Article_Channel, shares) ) + geom_col(size = 5, alpha = 0.5, color="red")
+ggplot(ONP_Final,aes(Article_Channel, shares) ) + geom_col(size =1, alpha = 0.9, color="red")
 ```
 
 
