@@ -102,7 +102,8 @@ summary(ONP.lm)
 
 Graph of day of week vs shares.
 ```{r}
-ggplot(ONP_Final) + geom_col(aes(x=(Day_of_Week),y=shares), color='palegreen4')
+positions <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+ggplot(ONP_Final) + geom_col(aes(x=(Day_of_Week),y=shares), color='palegreen4')+scale_x_discrete(limits = positions)
 ```
 
 Graph videos vs shares.
