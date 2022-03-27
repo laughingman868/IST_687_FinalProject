@@ -97,6 +97,7 @@ confusion1
 Linear Regression Model using seven attributes as predictors. 
 ```{r}
 ONP.lm = lm(formula=shares ~ num_videos + num_imgs + n_tokens_content + rate_positive_words+rate_negative_words+Day_of_Week+Article_Channel, data = ONP_Final)
+
 summary(ONP.lm)
 ```
 
