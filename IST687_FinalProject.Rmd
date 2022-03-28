@@ -2,6 +2,7 @@
 library(tidyverse)
 library(caret)
 library(ggplot2)
+library(PerformanceAnalytics)
 rm(list = ls())#Clears environment variables
 ```
 Reads in the .csv file which has already been added to the project folder
@@ -136,12 +137,22 @@ Descriptive statistics
 range(ONP_Final_DS$n_tokens_content)
 range(ONP_Final_DS$num_imgs)
 range(ONP_Final_DS$num_videos)
+range(ONP_Final_DS$shares)
 
 mean(ONP_Final_DS$n_tokens_content)
 mean(ONP_Final_DS$num_imgs)
 mean(ONP_Final_DS$num_videos)
+mean(ONP_Final_DS$shares)
 
+skewness(ONP_Final_DS$n_tokens_content)
+skewness(ONP_Final_DS$num_imgs)
+skewness(ONP_Final_DS$num_videos)
+skewness(ONP_Final_DS$shares)
 
+sd(ONP_Final_DS$n_tokens_content)
+sd(ONP_Final_DS$num_imgs)
+sd(ONP_Final_DS$num_videos)
+sd(ONP_Final_DS$shares)
 ```
 
 
