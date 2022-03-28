@@ -75,6 +75,7 @@ ONP_Final$popularity <- as.factor(ONP_Final$popularity)
 
 Sample of df specifically for running the SVM model, the original ~33k rows was taking extremely long to run. 
 ```{r}
+ONP_Final_DS <- ONP_Final#using this specifically for descriptive statistics
 ONP_Final <- ONP_Final[sample(nrow(ONP_Final), 10000), ]
 ```
 
@@ -130,6 +131,17 @@ predDF <- data.frame(num_videos=4, num_imgs=5, n_tokens_content=500, rate_positi
 
 predict(ONP.lm, predDF)
 ```
+Descriptive statistics
+```{r}
+range(ONP_Final_DS$n_tokens_content)
+range(ONP_Final_DS$num_imgs)
+range(ONP_Final_DS$num_videos)
 
+mean(ONP_Final_DS$n_tokens_content)
+mean(ONP_Final_DS$num_imgs)
+mean(ONP_Final_DS$num_videos)
+
+
+```
 
 
