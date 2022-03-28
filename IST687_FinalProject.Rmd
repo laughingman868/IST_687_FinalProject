@@ -1,6 +1,7 @@
 ```{r}
 library(tidyverse)
 library(caret)
+library(ggplot2)
 rm(list = ls())#Clears environment variables
 ```
 Reads in the .csv file which has already been added to the project folder
@@ -104,23 +105,22 @@ summary(ONP.lm)
 Graph of day of week vs shares.
 ```{r}
 positions <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-ggplot(ONP_Final) + geom_col(aes(x=(Day_of_Week),y=shares), color='palegreen4')+scale_x_discrete(limits = positions)
+ggplot(ONP_Final) + geom_col(aes(x=(Day_of_Week),y=sum(shares)), color='palegreen4')+scale_x_discrete(limits = positions)
 ```
 
 Graph videos vs shares.
 ```{r}
-ggplot(ONP_Final,aes(num_videos,shares) ) + geom_col(size = 1, alpha = 5, color="palegreen4")+xlim(0,10)+ylim(0,3e+07)
+ggplot(ONP_Final) + geom_col(aes(x=num_videos, y=sum(shares)), color='palegreen4')+xlim(0,20)+ylim(0,1e+11)
 ```
 
 Graph of images vs shares.
 ```{r}
-ggplot(ONP_Final, aes(num_imgs,shares)) + geom_col(size = .1, colour = "palegreen4",  )+xlim(0,30)
+ggplot(ONP_Final) + geom_col(aes(x=num_imgs, y=sum(shares)), color='palegreen4')+xlim(0, 30)
 ```
 
 Article channel vs day of week.
 ```{r}
-ggplot(ONP_Final,aes(Article_Channel, shares) ) + geom_col(size =1, alpha = 0.9, color="palegreen4")
-
+ggplot(ONP_Final) + geom_col(aes(x=Article_Channel, y=sum(shares)), color='palegreen4')
 ```
 
 
@@ -129,23 +129,6 @@ ggplot(ONP_Final,aes(Article_Channel, shares) ) + geom_col(size =1, alpha = 0.9,
 predDF <- data.frame(num_videos=4, num_imgs=5, n_tokens_content=500, rate_positive_words=.8,rate_negative_words=.3,Day_of_Week='Monday',Article_Channel="Business")
 
 predict(ONP.lm, predDF)
-```
-
-
-
-
-
-neural net for funsies 
-```{r}
-ONP.net <- neuralnet(popularity ~ n_tokens_content+num_imgs+num_videos, ONP_Final, hidden = 4, linear.output = F, threshold = .2)
-```
-
-```{r}
-plot(ONP.net,rep="best")
-```
-
-```{r}
-ONP.net$result.matrix
 ```
 
 
